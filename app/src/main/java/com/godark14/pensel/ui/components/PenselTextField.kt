@@ -18,7 +18,8 @@ fun PenselTextField(
     onValueChange: (String) -> Unit,
     modifier: Modifier = Modifier,
     required: Boolean = false,
-    placeholder: String = ""
+    placeholder: String = "",
+    errorMessage: String? = null
 ) {
     OutlinedTextField(
         value = value,
@@ -32,12 +33,19 @@ fun PenselTextField(
         placeholder = { Text(placeholder.ifEmpty { "Enter your ${label.lowercase()}" }) },
         modifier = modifier.fillMaxWidth(),
         singleLine = true,
+        isError = errorMessage != null,
+        supportingText = {
+            if (errorMessage != null) {
+                Text(text = errorMessage, color = MaterialTheme.colorScheme.error)
+            }
+        },
         shape = RoundedCornerShape(8.dp),
         colors = OutlinedTextFieldDefaults.colors(
             focusedBorderColor = MaterialTheme.colorScheme.primary,
             unfocusedBorderColor = MaterialTheme.colorScheme.outline,
             focusedContainerColor = MaterialTheme.colorScheme.surface,
-            unfocusedContainerColor = MaterialTheme.colorScheme.surface
+            unfocusedContainerColor = MaterialTheme.colorScheme.surface,
+            errorBorderColor = MaterialTheme.colorScheme.error
         )
     )
 }

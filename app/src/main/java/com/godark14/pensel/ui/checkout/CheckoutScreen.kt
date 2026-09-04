@@ -27,6 +27,13 @@ fun CheckoutScreen(
     val uiState by viewModel.uiState.collectAsState()
     val foldPosture = rememberFoldPosture()
 
+    if (uiState.isOrderPlaced) {
+        OrderConfirmationDialog(
+            total = uiState.total,
+            onDismiss = viewModel::dismissOrderConfirmation
+        )
+    }
+
     when (foldPosture) {
         FoldPosture.CLOSED -> CheckoutScreenClosed(
             uiState = uiState,
@@ -58,6 +65,7 @@ private fun CheckoutScreenClosed(
         DeliveryFormSection(
             deliveryInfo = uiState.deliveryInfo,
             isActive = uiState.currentStep == CheckoutStep.DELIVERY,
+            errors = uiState.deliveryErrors,
             onUpdate = viewModel::updateDeliveryInfo,
             onContinue = viewModel::goToPaymentStep,
             onEdit = viewModel::goToDeliveryStep
@@ -66,9 +74,10 @@ private fun CheckoutScreenClosed(
         PaymentFormSection(
             paymentInfo = uiState.paymentInfo,
             isActive = uiState.currentStep == CheckoutStep.PAYMENT,
+            errors = uiState.paymentErrors,
             onUpdate = viewModel::updatePaymentInfo,
             onBack = viewModel::goToDeliveryStep,
-            onPlaceOrder = { /* TODO: submit order */ }
+            onPlaceOrder = viewModel::placeOrder
         )
 
         OrderSummarySection(
@@ -107,6 +116,7 @@ private fun CheckoutScreenOpened(
             DeliveryFormSection(
                 deliveryInfo = uiState.deliveryInfo,
                 isActive = uiState.currentStep == CheckoutStep.DELIVERY,
+                errors = uiState.deliveryErrors,
                 onUpdate = viewModel::updateDeliveryInfo,
                 onContinue = viewModel::goToPaymentStep,
                 onEdit = viewModel::goToDeliveryStep
@@ -115,9 +125,10 @@ private fun CheckoutScreenOpened(
             PaymentFormSection(
                 paymentInfo = uiState.paymentInfo,
                 isActive = uiState.currentStep == CheckoutStep.PAYMENT,
+                errors = uiState.paymentErrors,
                 onUpdate = viewModel::updatePaymentInfo,
                 onBack = viewModel::goToDeliveryStep,
-                onPlaceOrder = { /* TODO: submit order */ },
+                onPlaceOrder = viewModel::placeOrder,
                 modifier = Modifier.padding(top = 24.dp)
             )
         }

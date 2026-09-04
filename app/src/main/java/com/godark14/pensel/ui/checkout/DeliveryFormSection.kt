@@ -22,6 +22,7 @@ import com.godark14.pensel.ui.components.PenselTextField
 fun DeliveryFormSection(
     deliveryInfo: DeliveryInfo,
     isActive: Boolean,
+    errors: Map<String, String>,
     onUpdate: ((DeliveryInfo) -> DeliveryInfo) -> Unit,
     onContinue: () -> Unit,
     onEdit: () -> Unit,
@@ -57,6 +58,7 @@ fun DeliveryFormSection(
                         value = deliveryInfo.firstName,
                         onValueChange = { v -> onUpdate { it.copy(firstName = v) } },
                         required = true,
+                        errorMessage = errors["firstName"],
                         modifier = Modifier.weight(1f)
                     )
                     PenselTextField(
@@ -64,6 +66,7 @@ fun DeliveryFormSection(
                         value = deliveryInfo.lastName,
                         onValueChange = { v -> onUpdate { it.copy(lastName = v) } },
                         required = true,
+                        errorMessage = errors["lastName"],
                         modifier = Modifier.weight(1f)
                     )
                 }
@@ -74,6 +77,7 @@ fun DeliveryFormSection(
                         value = deliveryInfo.email,
                         onValueChange = { v -> onUpdate { it.copy(email = v) } },
                         required = true,
+                        errorMessage = errors["email"],
                         modifier = Modifier.weight(1f)
                     )
                     PenselTextField(
@@ -81,6 +85,7 @@ fun DeliveryFormSection(
                         value = deliveryInfo.phoneNumber,
                         onValueChange = { v -> onUpdate { it.copy(phoneNumber = v) } },
                         required = true,
+                        errorMessage = errors["phoneNumber"],
                         modifier = Modifier.weight(1f)
                     )
                 }
@@ -89,14 +94,16 @@ fun DeliveryFormSection(
                     label = "Country / Region",
                     value = deliveryInfo.countryRegion,
                     onValueChange = { v -> onUpdate { it.copy(countryRegion = v) } },
-                    required = true
+                    required = true,
+                    errorMessage = errors["countryRegion"]
                 )
 
                 PenselTextField(
                     label = "Address",
                     value = deliveryInfo.address,
                     onValueChange = { v -> onUpdate { it.copy(address = v) } },
-                    required = true
+                    required = true,
+                    errorMessage = errors["address"]
                 )
 
                 Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
@@ -105,6 +112,7 @@ fun DeliveryFormSection(
                         value = deliveryInfo.city,
                         onValueChange = { v -> onUpdate { it.copy(city = v) } },
                         required = true,
+                        errorMessage = errors["city"],
                         modifier = Modifier.weight(1f)
                     )
                     PenselTextField(
@@ -112,6 +120,7 @@ fun DeliveryFormSection(
                         value = deliveryInfo.state,
                         onValueChange = { v -> onUpdate { it.copy(state = v) } },
                         required = true,
+                        errorMessage = errors["state"],
                         modifier = Modifier.weight(1f)
                     )
                     PenselTextField(
@@ -119,6 +128,7 @@ fun DeliveryFormSection(
                         value = deliveryInfo.postalCode,
                         onValueChange = { v -> onUpdate { it.copy(postalCode = v) } },
                         required = true,
+                        errorMessage = errors["postalCode"],
                         modifier = Modifier.weight(1f)
                     )
                 }

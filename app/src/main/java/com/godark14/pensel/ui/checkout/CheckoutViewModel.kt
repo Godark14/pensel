@@ -14,10 +14,13 @@ data class CheckoutUiState(
     val currentStep: CheckoutStep = CheckoutStep.DELIVERY,
     val deliveryInfo: DeliveryInfo = DeliveryInfo(),
     val paymentInfo: PaymentInfo = PaymentInfo(),
+    val deliveryErrors: Map<String, String> = emptyMap(),
+    val paymentErrors: Map<String, String> = emptyMap(),
     val cartItems: List<CartItem> = emptyList(),
     val shippingCost: Double = 0.0,
     val couponCode: String = "",
-    val isOrderSummaryExpanded: Boolean = true
+    val isOrderSummaryExpanded: Boolean = true,
+    val isOrderPlaced: Boolean = false
 ) {
     val subtotal: Double
         get() = cartItems.sumOf { it.product.price * it.quantity }
@@ -37,19 +40,57 @@ class CheckoutViewModel : ViewModel() {
     val uiState: StateFlow<CheckoutUiState> = _uiState.asStateFlow()
 
     fun updateDeliveryInfo(update: (DeliveryInfo) -> DeliveryInfo) {
-        _uiState.update { it.copy(deliveryInfo = update(it.deliveryInfo)) }
+        _uiState.update {
+            val newInfo = update(it.deliveryInfo)
+            it.copy(
+                deliveryInfo = newInfo,
+                deliveryErrors = if (it.deliveryErrors.isNotEmpty()) {
+                    CheckoutValidator.validateDelivery(newInfo)
+                } else {
+                    it.deliveryErrors
+                }
+            )
+        }
     }
 
     fun updatePaymentInfo(update: (PaymentInfo) -> PaymentInfo) {
-        _uiState.update { it.copy(paymentInfo = update(it.paymentInfo)) }
+        _uiState.update {
+            val newInfo = update(it.paymentInfo)
+            it.copy(
+                paymentInfo = newInfo,
+                paymentErrors = if (it.paymentErrors.isNotEmpty()) {
+                    CheckoutValidator.validatePayment(newInfo)
+                } else {
+                    it.paymentErrors
+                }
+            )
+        }
     }
 
     fun goToPaymentStep() {
-        _uiState.update { it.copy(currentStep = CheckoutStep.PAYMENT) }
+        val errors = CheckoutValidator.validateDelivery(_uiState.value.deliveryInfo)
+        if (errors.isEmpty()) {
+            _uiState.update { it.copy(currentStep = CheckoutStep.PAYMENT, deliveryErrors = emptyMap()) }
+        } else {
+            _uiState.update { it.copy(deliveryErrors = errors) }
+        }
     }
 
     fun goToDeliveryStep() {
         _uiState.update { it.copy(currentStep = CheckoutStep.DELIVERY) }
+    }
+
+    fun placeOrder() {
+        val errors = CheckoutValidator.validatePayment(_uiState.value.paymentInfo)
+        if (errors.isEmpty()) {
+            _uiState.update { it.copy(paymentErrors = emptyMap(), isOrderPlaced = true) }
+        } else {
+            _uiState.update { it.copy(paymentErrors = errors) }
+        }
+    }
+
+    fun dismissOrderConfirmation() {
+        _uiState.update { it.copy(isOrderPlaced = false) }
     }
 
     fun updateQuantity(itemId: String, newQuantity: Int) {

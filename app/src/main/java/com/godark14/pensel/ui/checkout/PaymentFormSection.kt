@@ -21,6 +21,7 @@ import com.godark14.pensel.ui.components.PenselTextField
 fun PaymentFormSection(
     paymentInfo: PaymentInfo,
     isActive: Boolean,
+    errors: Map<String, String>,
     onUpdate: ((PaymentInfo) -> PaymentInfo) -> Unit,
     onBack: () -> Unit,
     onPlaceOrder: () -> Unit,
@@ -46,7 +47,8 @@ fun PaymentFormSection(
                     label = "Cardholder Name",
                     value = paymentInfo.cardholderName,
                     onValueChange = { v -> onUpdate { it.copy(cardholderName = v) } },
-                    required = true
+                    required = true,
+                    errorMessage = errors["cardholderName"]
                 )
 
                 PenselTextField(
@@ -54,7 +56,8 @@ fun PaymentFormSection(
                     value = paymentInfo.cardNumber,
                     onValueChange = { v -> onUpdate { it.copy(cardNumber = v) } },
                     required = true,
-                    placeholder = "1234 5678 9012 3456"
+                    placeholder = "1234 5678 9012 3456",
+                    errorMessage = errors["cardNumber"]
                 )
 
                 Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
@@ -64,6 +67,7 @@ fun PaymentFormSection(
                         onValueChange = { v -> onUpdate { it.copy(expiryDate = v) } },
                         required = true,
                         placeholder = "MM/YY",
+                        errorMessage = errors["expiryDate"],
                         modifier = Modifier.weight(1f)
                     )
                     PenselTextField(
@@ -72,6 +76,7 @@ fun PaymentFormSection(
                         onValueChange = { v -> onUpdate { it.copy(cvv = v) } },
                         required = true,
                         placeholder = "123",
+                        errorMessage = errors["cvv"],
                         modifier = Modifier.weight(1f)
                     )
                 }
