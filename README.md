@@ -10,6 +10,12 @@
 
 An Android e-commerce app for selling canvas art, built natively for foldable devices.
 
+## Screenshots
+
+| Closed | Opened |
+| ------ | ------ |
+| ![Home screen closed](screenshots/home_closed.png) | ![Home screen opened](screenshots/home_opened.png) |
+
 ## Features
 
 - Home screen with hero banner and a grid of featured products
