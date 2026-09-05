@@ -1,42 +1,60 @@
-# Pensel
+# Pensel — You're the artist
 
-Application Android e-commerce pour la vente de toiles/canvas, pensée nativement pour les appareils pliables (fold).
+![Kotlin](https://img.shields.io/badge/Kotlin-2.2.10-7F52FF?logo=kotlin&logoColor=white)
+![Jetpack Compose](https://img.shields.io/badge/Jetpack%20Compose-BOM%202026.02.01-4285F4?logo=jetpackcompose&logoColor=white)
+![Min SDK](https://img.shields.io/badge/minSdk-24-3DDC84?logo=android&logoColor=white)
+![Target SDK](https://img.shields.io/badge/targetSdk-37-3DDC84?logo=android&logoColor=white)
+![Gradle](https://img.shields.io/badge/Gradle-9.6.0-02303A?logo=gradle&logoColor=white)
+![Foldable Ready](https://img.shields.io/badge/Foldable-CLOSED%20%2F%20OPENED-6B4FE0)
+![License](https://img.shields.io/badge/license-Unlicensed-lightgrey)
 
-## Fonctionnalités
+An Android e-commerce app for selling canvas art, built natively for foldable devices.
 
-- Écran de checkout avec formulaire de livraison, paiement, et récapitulatif de commande
-- Support natif fold : bascule automatique entre deux postures
-    - **CLOSED** — layout vertical, une seule colonne, récap panier en accordéon repliable
-    - **OPENED** — layout deux colonnes (formulaire à gauche, récap toujours visible à droite)
-- Thème clair/sombre adaptatif basé sur les préférences système
-- Devise en dollar ($)
+## Features
 
-## Stack technique
+- Home screen with hero banner and a grid of featured products
+- Full catalog with a product grid (quick add-to-cart)
+- Product detail screen (image, description, quantity, add to cart)
+- Shared cart across screens (cart icon with item count badge)
+- Checkout screen with delivery form, payment form, and order summary
+- Full form validation (delivery and payment) with inline error messages
+- Order confirmation dialog, cart automatically cleared after purchase
+- Native foldable support — automatic layout switch between two postures
+    - **CLOSED** — single-column vertical layout, collapsible order summary accordion
+    - **OPENED** — two-column layout (form on the left, summary always visible on the right; image on the left, info on the right on the product detail screen)
+- Adaptive light/dark theme based on system preference
+- Prices displayed in USD ($)
+
+## Tech Stack
 
 - Kotlin 2.2.10
 - Jetpack Compose (BOM 2026.02.01)
 - AGP 9.4.0 / Gradle 9.6.0
-- androidx.window pour la détection de posture fold
-- androidx.lifecycle (ViewModel + StateFlow) pour la gestion d'état
-- androidx.navigation-compose
-- Coil pour le chargement d'images
+- androidx.window for fold posture detection
+- androidx.lifecycle (ViewModel + StateFlow) for state management
+- androidx.navigation-compose for screen navigation
+- Coil for image loading
 - compileSdk/targetSdk 37, minSdk 24
 
 ## Architecture
 
 - com.godark14.pensel/
     - data/
-        - model/ → modèles de données (Product, CartItem, DeliveryInfo, PaymentInfo)
-        - mock/ → repository mocké (données de démo, avant intégration API)
-    - fold/ → détection de posture fold (CLOSED/OPENED uniquement)
+        - model/ → data models (Product, CartItem, DeliveryInfo, PaymentInfo)
+        - mock/ → mocked repository (demo data, ahead of real API integration)
+    - fold/ → fold posture detection (CLOSED/OPENED only)
     - ui/
-        - checkout/ → écran de checkout et ses sections (livraison, paiement, récap)
-        - components/ → composants réutilisables
-        - theme/ → thème Pensel (couleurs, typographie, dark/light)
+        - home/ → home screen (banner, featured products)
+        - catalog/ → catalog and product detail screens
+        - cart/ → shared cart state across screens
+        - checkout/ → checkout screen and its sections (delivery, payment, summary)
+        - components/ → reusable UI components
+        - navigation/ → NavHost and app routes
+        - theme/ → Pensel theme (colors, typography, dark/light)
     - MainActivity.kt
 
-## À venir
+## Roadmap
 
-- Intégration API (Retrofit) pour remplacer les données mockées
-- Écrans catalogue et accueil
-- Validation de commande complète
+- API integration (Retrofit) to replace mocked data
+- Real coupon code logic (currently decorative)
+- Auto-formatting for the card number field
