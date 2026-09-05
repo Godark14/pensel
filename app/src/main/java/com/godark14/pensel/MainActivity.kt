@@ -5,8 +5,6 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.Scaffold
 import androidx.compose.ui.Modifier
 import com.godark14.pensel.fold.rememberFoldPosture
 import com.godark14.pensel.ui.navigation.PenselNavHost
@@ -18,13 +16,11 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         setContent {
             PenselTheme {
-                Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-                    val foldPosture = rememberFoldPosture()
-                    PenselNavHost(
-                        foldPosture = foldPosture,
-                        modifier = Modifier.padding(innerPadding)
-                    )
-                }
+                val foldPosture = rememberFoldPosture()
+                PenselNavHost(
+                    foldPosture = foldPosture,
+                    modifier = Modifier.fillMaxSize()
+                )
             }
         }
     }

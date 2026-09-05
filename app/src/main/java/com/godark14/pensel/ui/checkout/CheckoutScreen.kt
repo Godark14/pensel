@@ -9,10 +9,21 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.filled.ShoppingCart
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -21,9 +32,11 @@ import com.godark14.pensel.fold.FoldPosture
 import com.godark14.pensel.fold.rememberFoldPosture
 import com.godark14.pensel.ui.cart.CartViewModel
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun CheckoutScreen(
     cartViewModel: CartViewModel,
+    onBack: () -> Unit,
     viewModel: CheckoutViewModel = viewModel(),
     modifier: Modifier = Modifier
 ) {
@@ -37,29 +50,93 @@ fun CheckoutScreen(
     if (uiState.isOrderPlaced) {
         OrderConfirmationDialog(
             total = total,
-            onDismiss = viewModel::dismissOrderConfirmation
+            onDismiss = {
+                viewModel.dismissOrderConfirmation()
+                cartViewModel.clearCart()
+                onBack()
+            }
         )
     }
 
-    when (foldPosture) {
-        FoldPosture.CLOSED -> CheckoutScreenClosed(
-            uiState = uiState,
-            cartItems = cartItems,
-            subtotal = subtotal,
-            total = total,
-            viewModel = viewModel,
-            cartViewModel = cartViewModel,
-            modifier = modifier
+    Scaffold(
+        modifier = modifier,
+        containerColor = MaterialTheme.colorScheme.background,
+        topBar = {
+            TopAppBar(
+                title = { Text("Checkout") },
+                navigationIcon = {
+                    IconButton(onClick = onBack) {
+                        Icon(Icons.Filled.ArrowBack, contentDescription = "Back to catalog")
+                    }
+                },
+                colors = TopAppBarDefaults.topAppBarColors(
+                    containerColor = MaterialTheme.colorScheme.background
+                )
+            )
+        }
+    ) { innerPadding ->
+        if (cartItems.isEmpty()) {
+            EmptyCartView(onBack = onBack, modifier = Modifier.padding(innerPadding))
+        } else {
+            when (foldPosture) {
+                FoldPosture.CLOSED -> CheckoutScreenClosed(
+                    uiState = uiState,
+                    cartItems = cartItems,
+                    subtotal = subtotal,
+                    total = total,
+                    viewModel = viewModel,
+                    cartViewModel = cartViewModel,
+                    modifier = Modifier.padding(innerPadding)
+                )
+                FoldPosture.OPENED -> CheckoutScreenOpened(
+                    uiState = uiState,
+                    cartItems = cartItems,
+                    subtotal = subtotal,
+                    total = total,
+                    viewModel = viewModel,
+                    cartViewModel = cartViewModel,
+                    modifier = Modifier.padding(innerPadding)
+                )
+            }
+        }
+    }
+}
+
+@Composable
+private fun EmptyCartView(
+    onBack: () -> Unit,
+    modifier: Modifier = Modifier
+) {
+    Column(
+        modifier = modifier
+            .fillMaxSize()
+            .padding(24.dp),
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.Center
+    ) {
+        Icon(
+            imageVector = Icons.Filled.ShoppingCart,
+            contentDescription = null,
+            modifier = Modifier.padding(bottom = 16.dp),
+            tint = MaterialTheme.colorScheme.onSurfaceVariant
         )
-        FoldPosture.OPENED -> CheckoutScreenOpened(
-            uiState = uiState,
-            cartItems = cartItems,
-            subtotal = subtotal,
-            total = total,
-            viewModel = viewModel,
-            cartViewModel = cartViewModel,
-            modifier = modifier
+        Text(
+            text = "Your cart is empty",
+            style = MaterialTheme.typography.titleMedium,
+            color = MaterialTheme.colorScheme.onSurfaceVariant
         )
+        Text(
+            text = "Browse the catalog to add some art to your cart.",
+            style = MaterialTheme.typography.bodyMedium,
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
+            modifier = Modifier.padding(top = 8.dp)
+        )
+        androidx.compose.material3.Button(
+            onClick = onBack,
+            modifier = Modifier.padding(top = 20.dp)
+        ) {
+            Text("Back to catalog")
+        }
     }
 }
 

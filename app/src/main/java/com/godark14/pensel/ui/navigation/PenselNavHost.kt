@@ -79,7 +79,10 @@ fun PenselNavHost(
         }
 
         composable(Routes.CHECKOUT) {
-            CheckoutScreen(cartViewModel = cartViewModel)
+            CheckoutScreen(
+                cartViewModel = cartViewModel,
+                onBack = { navController.popBackStack() }
+            )
         }
     }
 }
