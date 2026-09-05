@@ -6,7 +6,7 @@
 ![Target SDK](https://img.shields.io/badge/targetSdk-37-3DDC84?logo=android&logoColor=white)
 ![Gradle](https://img.shields.io/badge/Gradle-9.6.0-02303A?logo=gradle&logoColor=white)
 ![Foldable Ready](https://img.shields.io/badge/Foldable-CLOSED%20%2F%20OPENED-6B4FE0)
-![License](https://img.shields.io/badge/license-Unlicensed-lightgrey)
+![License](https://img.shields.io/badge/license-MIT-yellow)
 
 An Android e-commerce app for selling canvas art, built natively for foldable devices.
 
@@ -58,3 +58,7 @@ An Android e-commerce app for selling canvas art, built natively for foldable de
 - API integration (Retrofit) to replace mocked data
 - Real coupon code logic (currently decorative)
 - Auto-formatting for the card number field
+
+## License
+
+This project is licensed under the MIT License — see the [LICENSE](LICENSE) file for details.
