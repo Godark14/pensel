@@ -8,7 +8,8 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
 import androidx.compose.ui.Modifier
-import com.godark14.pensel.ui.checkout.CheckoutScreen
+import com.godark14.pensel.fold.rememberFoldPosture
+import com.godark14.pensel.ui.navigation.PenselNavHost
 import com.godark14.pensel.ui.theme.PenselTheme
 
 class MainActivity : ComponentActivity() {
@@ -18,7 +19,11 @@ class MainActivity : ComponentActivity() {
         setContent {
             PenselTheme {
                 Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-                    CheckoutScreen(modifier = Modifier.padding(innerPadding))
+                    val foldPosture = rememberFoldPosture()
+                    PenselNavHost(
+                        foldPosture = foldPosture,
+                        modifier = Modifier.padding(innerPadding)
+                    )
                 }
             }
         }

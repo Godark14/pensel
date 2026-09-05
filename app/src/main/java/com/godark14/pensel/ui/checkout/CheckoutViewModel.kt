@@ -16,27 +16,15 @@ data class CheckoutUiState(
     val paymentInfo: PaymentInfo = PaymentInfo(),
     val deliveryErrors: Map<String, String> = emptyMap(),
     val paymentErrors: Map<String, String> = emptyMap(),
-    val cartItems: List<CartItem> = emptyList(),
-    val shippingCost: Double = 0.0,
+    val shippingCost: Double = MockProductRepository.SHIPPING_COST,
     val couponCode: String = "",
     val isOrderSummaryExpanded: Boolean = true,
     val isOrderPlaced: Boolean = false
-) {
-    val subtotal: Double
-        get() = cartItems.sumOf { it.product.price * it.quantity }
-
-    val total: Double
-        get() = subtotal + shippingCost
-}
+)
 
 class CheckoutViewModel : ViewModel() {
 
-    private val _uiState = MutableStateFlow(
-        CheckoutUiState(
-            cartItems = MockProductRepository.getMockCart(),
-            shippingCost = MockProductRepository.SHIPPING_COST
-        )
-    )
+    private val _uiState = MutableStateFlow(CheckoutUiState())
     val uiState: StateFlow<CheckoutUiState> = _uiState.asStateFlow()
 
     fun updateDeliveryInfo(update: (DeliveryInfo) -> DeliveryInfo) {
@@ -91,17 +79,6 @@ class CheckoutViewModel : ViewModel() {
 
     fun dismissOrderConfirmation() {
         _uiState.update { it.copy(isOrderPlaced = false) }
-    }
-
-    fun updateQuantity(itemId: String, newQuantity: Int) {
-        if (newQuantity < 1) return
-        _uiState.update { state ->
-            state.copy(
-                cartItems = state.cartItems.map {
-                    if (it.product.id == itemId) it.copy(quantity = newQuantity) else it
-                }
-            )
-        }
     }
 
     fun updateCouponCode(code: String) {

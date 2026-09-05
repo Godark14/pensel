@@ -16,20 +16,27 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.godark14.pensel.data.model.CartItem
 import com.godark14.pensel.fold.FoldPosture
 import com.godark14.pensel.fold.rememberFoldPosture
+import com.godark14.pensel.ui.cart.CartViewModel
 
 @Composable
 fun CheckoutScreen(
+    cartViewModel: CartViewModel,
     viewModel: CheckoutViewModel = viewModel(),
     modifier: Modifier = Modifier
 ) {
     val uiState by viewModel.uiState.collectAsState()
+    val cartItems by cartViewModel.cartItems.collectAsState()
     val foldPosture = rememberFoldPosture()
+
+    val subtotal = cartItems.sumOf { it.product.price * it.quantity }
+    val total = subtotal + uiState.shippingCost
 
     if (uiState.isOrderPlaced) {
         OrderConfirmationDialog(
-            total = uiState.total,
+            total = total,
             onDismiss = viewModel::dismissOrderConfirmation
         )
     }
@@ -37,12 +44,20 @@ fun CheckoutScreen(
     when (foldPosture) {
         FoldPosture.CLOSED -> CheckoutScreenClosed(
             uiState = uiState,
+            cartItems = cartItems,
+            subtotal = subtotal,
+            total = total,
             viewModel = viewModel,
+            cartViewModel = cartViewModel,
             modifier = modifier
         )
         FoldPosture.OPENED -> CheckoutScreenOpened(
             uiState = uiState,
+            cartItems = cartItems,
+            subtotal = subtotal,
+            total = total,
             viewModel = viewModel,
+            cartViewModel = cartViewModel,
             modifier = modifier
         )
     }
@@ -51,7 +66,11 @@ fun CheckoutScreen(
 @Composable
 private fun CheckoutScreenClosed(
     uiState: CheckoutUiState,
+    cartItems: List<CartItem>,
+    subtotal: Double,
+    total: Double,
     viewModel: CheckoutViewModel,
+    cartViewModel: CartViewModel,
     modifier: Modifier = Modifier
 ) {
     Column(
@@ -81,14 +100,14 @@ private fun CheckoutScreenClosed(
         )
 
         OrderSummarySection(
-            cartItems = uiState.cartItems,
-            subtotal = uiState.subtotal,
+            cartItems = cartItems,
+            subtotal = subtotal,
             shippingCost = uiState.shippingCost,
-            total = uiState.total,
+            total = total,
             couponCode = uiState.couponCode,
             isExpanded = uiState.isOrderSummaryExpanded,
             onToggleExpand = viewModel::toggleOrderSummary,
-            onQuantityChange = viewModel::updateQuantity,
+            onQuantityChange = cartViewModel::updateQuantity,
             onCouponCodeChange = viewModel::updateCouponCode,
             showToggle = true
         )
@@ -98,7 +117,11 @@ private fun CheckoutScreenClosed(
 @Composable
 private fun CheckoutScreenOpened(
     uiState: CheckoutUiState,
+    cartItems: List<CartItem>,
+    subtotal: Double,
+    total: Double,
     viewModel: CheckoutViewModel,
+    cartViewModel: CartViewModel,
     modifier: Modifier = Modifier
 ) {
     Row(
@@ -141,14 +164,14 @@ private fun CheckoutScreenOpened(
                 .padding(20.dp)
         ) {
             OrderSummarySection(
-                cartItems = uiState.cartItems,
-                subtotal = uiState.subtotal,
+                cartItems = cartItems,
+                subtotal = subtotal,
                 shippingCost = uiState.shippingCost,
-                total = uiState.total,
+                total = total,
                 couponCode = uiState.couponCode,
                 isExpanded = true,
                 onToggleExpand = {},
-                onQuantityChange = viewModel::updateQuantity,
+                onQuantityChange = cartViewModel::updateQuantity,
                 onCouponCodeChange = viewModel::updateCouponCode,
                 showToggle = false
             )
