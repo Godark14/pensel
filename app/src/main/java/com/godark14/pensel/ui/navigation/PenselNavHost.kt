@@ -16,8 +16,10 @@ import com.godark14.pensel.ui.cart.CartViewModel
 import com.godark14.pensel.ui.catalog.CatalogScreen
 import com.godark14.pensel.ui.catalog.ProductDetailScreen
 import com.godark14.pensel.ui.checkout.CheckoutScreen
+import com.godark14.pensel.ui.home.HomeScreen
 
 private object Routes {
+    const val HOME = "home"
     const val CATALOG = "catalog"
     const val PRODUCT_DETAIL = "productDetail/{productId}"
     const val CHECKOUT = "checkout"
@@ -35,9 +37,29 @@ fun PenselNavHost(
 
     NavHost(
         navController = navController,
-        startDestination = Routes.CATALOG,
+        startDestination = Routes.HOME,
         modifier = modifier
     ) {
+        composable(Routes.HOME) {
+            val cartItems by cartViewModel.cartItems.collectAsState()
+            val itemCount = cartItems.sumOf { it.quantity }
+
+            HomeScreen(
+                featuredProducts = MockProductRepository.featuredProducts,
+                foldPosture = foldPosture,
+                cartItemCount = itemCount,
+                onProductClick = { product ->
+                    navController.navigate(Routes.productDetail(product.id))
+                },
+                onShopAllClick = {
+                    navController.navigate(Routes.CATALOG)
+                },
+                onCartClick = {
+                    navController.navigate(Routes.CHECKOUT)
+                }
+            )
+        }
+
         composable(Routes.CATALOG) {
             val cartItems by cartViewModel.cartItems.collectAsState()
             val itemCount = cartItems.sumOf { it.quantity }

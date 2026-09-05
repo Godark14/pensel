@@ -6,5 +6,6 @@ data class Product(
     val imageUrl: String,
     val price: Double,
     val description: String = "",
-    val currency: String = "$"
+    val currency: String = "$",
+    val isFeatured: Boolean = false
 )
