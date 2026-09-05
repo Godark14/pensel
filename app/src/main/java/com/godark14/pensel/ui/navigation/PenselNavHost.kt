@@ -39,14 +39,21 @@ fun PenselNavHost(
         modifier = modifier
     ) {
         composable(Routes.CATALOG) {
+            val cartItems by cartViewModel.cartItems.collectAsState()
+            val itemCount = cartItems.sumOf { it.quantity }
+
             CatalogScreen(
                 products = MockProductRepository.products,
                 foldPosture = foldPosture,
+                cartItemCount = itemCount,
                 onProductClick = { product ->
                     navController.navigate(Routes.productDetail(product.id))
                 },
                 onAddToCart = { product ->
                     cartViewModel.addToCart(product)
+                },
+                onCartClick = {
+                    navController.navigate(Routes.CHECKOUT)
                 }
             )
         }
